@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :posts
   require "securerandom"
 
   before_validation :set_uuid, on: :create

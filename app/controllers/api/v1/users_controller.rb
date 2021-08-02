@@ -15,7 +15,7 @@ class Api::V1::UsersController < ApplicationController
   def index
     data = params[:limit].nil? ? 3 : Integer(params[:limit])
     page = params[:page].nil? ? 0 : Integer(params[:page])
-    @users = User.all.limit(data).offset(data * page)
+    @users = User.all.limit(data).offset(data * page).order(:id)
     respond_to do |format|
       format.json { render json: { data: @users.as_json(only: [:name, :email]) }, status: 201 }
       format.xml { render xml: { data: @users.as_json(only: [:name, :email]) }, status: 201 }
@@ -55,6 +55,6 @@ class Api::V1::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :userToken)
+    params.require(:user_req_dto).permit(:name, :email, :password)
   end
 end
