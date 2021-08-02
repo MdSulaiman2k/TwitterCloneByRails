@@ -1,6 +1,8 @@
 class Api::V1::PostsController < ApplicationController
   def index
-    @posts = Post.all
+    data = params[:limit].nil? ? 3 : Integer(params[:limit])
+    page = params[:page].nil? ? 0 : Integer(params[:page])
+    @posts = Post.all.limit(data).offset(data * page).order(:id)
     respond_to do |format|
       format.json { render json: { data: @posts.as_json(only: [:id, :content, :user_id]) }, status: 200 }
       format.xml { render xml: { data: @posts.as_json(only: [:id, :content, :user_id]) }, status: 200 }
@@ -43,10 +45,6 @@ class Api::V1::PostsController < ApplicationController
       format.json { render json: { data: @post.as_json(only: [:id, :content, :user_id]) }, status: 202 }
       format.xml { render xml: { data: @post.as_json(only: [:id, :content, :user_id]) }, status: 202 }
     end
-  end
-
-  def destroy_all
-    @post = ensureTokenAuthentication.posts.destroy_all
   end
 
   private
